@@ -1,8 +1,14 @@
 $(document).ready(
     function () {
+        const TextBox = document.getElementById("TextBox");
+
         const subScript = () => {
             const empID = document.getElementById("employeeID").value;
-            $.post("https://test-api.adp.com/events/time/v1/clock.punch", {
+            // console.log(Date.now());
+            let d = new Date().toISOString();
+            // console.log(d);
+            let url = "https://test-api.adp.com"
+            $.post(`${url}/events/time/v1/clock.punch`, {
                 "events": [
                     {
                         "serviceCategoryCode": {
@@ -23,8 +29,8 @@ $(document).ready(
                             },
                             "transform": {
                                 "clockEntry": {
-                                    "deviceDateTime": "2020-06-18T00:00:00-04:00",
-                                    "entryDateTime": "2020-06-18T00:00:00-04:00",
+                                    "deviceDateTime": d,
+                                    "entryDateTime": d,
                                     "actionCode": {
                                         "codeValue": "transfer"
                                     },
@@ -54,10 +60,23 @@ $(document).ready(
                 ]
             },
                 function (data, status) {
-                    console.log("Status: " + status)
+                    if (status == "success") {
+                        $(TextBox).text(`Successfully logged in user ${empID} \n
+                        at ${d} into ${url}`);
+
+                        document.getElementById("employeeID").value = "";
+
+                        console.log(`Successfully logged in user ${empID} \n` 
+                            + ` at ${d} into ${url}`);
+                    }else{
+                        console.log(status);
+                    }
+
                 })
         }
 
-        document.getElementById("subButton").addEventListener("click", subScript);
+        document.getElementById("employeeID").addEventListener("change", subScript);
+
+        // document.getElementById("subButton").addEventListener("click", subScript);
     }
 )
